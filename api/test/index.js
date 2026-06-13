@@ -1,7 +1,8 @@
-module.exports = async function(context, req) {
+module.exports = function(context, req) {
   context.res = {
     status: 200,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ok: true, env: !!process.env.COSMOS_ENDPOINT })
+    body: "{ \"ok\": true }"
   };
+  context.done();
 };
