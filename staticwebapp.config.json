@@ -1,37 +1,12 @@
 {
-  "auth": {
-    "identityProviders": {
-      "azureActiveDirectory": {
-        "registration": {
-          "openIdIssuer": "https://login.microsoftonline.com/65334e89-3298-418a-a018-836aa700d130/v2.0",
-          "clientIdSettingName": "AAD_CLIENT_ID",
-          "clientSecretSettingName": "AAD_CLIENT_SECRET"
-        }
-      }
-    }
-  },
   "routes": [
     {
-      "route": "/.auth/*",
-      "allowedRoles": ["anonymous"]
-    },
-    {
       "route": "/*",
-      "allowedRoles": ["authenticated"]
-    }
-  ],
-  "responseOverrides": {
-    "401": {
-      "redirect": "/.auth/login/aad?post_login_redirect_uri=/index.html",
-      "statusCode": 302
-    },
-    "404": {
-      "rewrite": "/index.html",
+      "serve": "/index.html",
       "statusCode": 200
     }
-  },
+  ],
   "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/.auth/*"]
+    "rewrite": "/index.html"
   }
 }
