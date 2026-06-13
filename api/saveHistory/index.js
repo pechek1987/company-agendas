@@ -1,17 +1,10 @@
-const { CosmosClient } = require("@azure/cosmos");
+const { request } = require("../cosmos");
 
 module.exports = async function (context, req) {
-  context.res = {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    }
-  };
+  context.res = { headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } };
   try {
-    const client = new CosmosClient({
-      endpoint: process.env.COSMOS_ENDPOINT,
-      key: process.env.COSMOS_KEY
-    });
+    const endpoint = process.env.COSMOS_ENDPOINT;
+    const key = process.env.COSMOS_KEY;
     const record = req.body;
     if (!record || !record.agendaKey || !record.date) {
       context.res.status = 400;
@@ -19,11 +12,13 @@ module.exports = async function (context, req) {
       return;
     }
     record.id = record.agendaKey + "_" + record.date;
-    const { resource } = await client
-      .database("agendas")
-      .container("history")
-      .items.upsert(record);
-    context.res.body = JSON.stringify(resource);
+    const result = await request("POST", "dbs/agendas/colls/history/docs", record, key, endpoint);
+    if (result.status === 409) {
+      const upResult = await request("PUT", "dbs/agendas/colls/history/docs/" + record.id, record, key, endpoint);
+      context.res.body = JSON.stringify(upResult.body);
+    } else {
+      context.res.body = JSON.stringify(result.body);
+    }
   } catch (err) {
     context.res.status = 500;
     context.res.body = JSON.stringify({ error: err.message });
