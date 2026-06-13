@@ -2,17 +2,14 @@ const { CosmosClient } = require("@azure/cosmos");
 
 module.exports = async function (context, req) {
   context.res = {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    }
+    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
   };
   try {
     const endpoint = process.env.COSMOS_ENDPOINT;
     const key = process.env.COSMOS_KEY;
     if (!endpoint || !key) {
       context.res.status = 500;
-      context.res.body = JSON.stringify({ error: "Missing COSMOS_ENDPOINT or COSMOS_KEY" });
+      context.res.body = JSON.stringify({ error: "Missing env vars", hasEndpoint: !!endpoint, hasKey: !!key });
       return;
     }
     const client = new CosmosClient({ endpoint, key });
@@ -28,6 +25,6 @@ module.exports = async function (context, req) {
     context.res.body = JSON.stringify(resources);
   } catch (err) {
     context.res.status = 500;
-    context.res.body = JSON.stringify({ error: err.message, stack: err.stack });
+    context.res.body = JSON.stringify({ error: err.message, name: err.name, code: err.code });
   }
 };
