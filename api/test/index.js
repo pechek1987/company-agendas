@@ -1,13 +1,7 @@
-module.exports = async function (context, req) {
-  const endpoint = process.env.COSMOS_ENDPOINT;
-  const key = process.env.COSMOS_KEY;
+module.exports = async function(context, req) {
   context.res = {
-    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-    body: JSON.stringify({
-      status: "API is working",
-      hasEndpoint: !!endpoint,
-      hasKey: !!key,
-      endpointPreview: endpoint ? endpoint.substring(0, 30) + "..." : "missing"
-    })
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ok: true, env: !!process.env.COSMOS_ENDPOINT })
   };
 };
