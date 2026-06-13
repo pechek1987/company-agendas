@@ -1,17 +1,9 @@
 {
-  "bindings": [
-    {
-      "authLevel": "anonymous",
-      "type": "httpTrigger",
-      "direction": "in",
-      "name": "req",
-      "methods": ["post"],
-      "route": "standings"
-    },
-    {
-      "type": "http",
-      "direction": "out",
-      "name": "res"
-    }
-  ]
+  "name": "company-agendas-api",
+  "version": "1.0.0",
+  "description": "API for Company Agendas",
+  "main": "index.js",
+  "dependencies": {
+    "@azure/cosmos": "^3.17.3"
+  }
 }
