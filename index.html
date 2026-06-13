@@ -166,24 +166,20 @@ textarea{resize:vertical;line-height:1.5}
   </div>
 </div>
 <script>
-(function(){
-  var PW='DarkHorse2025!';
-  var KEY='ca_auth_ok';
-  if(localStorage.getItem(KEY)==='1'){
+var PW='DarkHorse2025!';
+// Auto-hide if already authenticated this session
+try{if(sessionStorage.getItem('ca_auth')==='1')document.getElementById('pw-overlay').style.display='none';}catch(e){}
+function checkPW(){
+  var val=document.getElementById('pw-input').value;
+  if(val===PW){
+    try{sessionStorage.setItem('ca_auth','1')}catch(e){}
     document.getElementById('pw-overlay').style.display='none';
+  } else {
+    document.getElementById('pw-err').style.display='block';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
   }
-  window.checkPW=function(){
-    var val=document.getElementById('pw-input').value;
-    if(val===PW){
-      localStorage.setItem(KEY,'1');
-      document.getElementById('pw-overlay').style.display='none';
-    } else {
-      document.getElementById('pw-err').style.display='block';
-      document.getElementById('pw-input').value='';
-      document.getElementById('pw-input').focus();
-    }
-  };
-})();
+}
 </script>
 
 
