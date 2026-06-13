@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Company Agendas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh}
+.nav{background:#fff;border-bottom:1px solid #e5e5e3;padding:0 1rem;display:flex;align-items:stretch;overflow-x:auto}
+.nav-title{font-size:14px;font-weight:700;padding:0 16px 0 4px;display:flex;align-items:center;white-space:nowrap;border-right:1px solid #e5e5e3;margin-right:4px}
+.nav-btn{background:none;border:none;border-bottom:3px solid transparent;padding:14px 12px;font-size:13px;cursor:pointer;color:#888;white-space:nowrap;font-family:inherit;margin-bottom:-1px}
+.nav-btn:hover{color:#1a1a1a}
+.nav-btn.active{color:#1a1a1a;font-weight:600;border-bottom-color:#1a1a1a}
+.pane{display:none;padding:1.5rem 1rem;max-width:760px;margin:0 auto}
+.pane.active{display:block}
+/* HOME */
+.home-grid{display:flex;flex-direction:column;gap:12px;margin-top:.5rem}
+.home-card{background:#fff;border-radius:12px;border:1px solid #e5e5e3;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .15s}
+.home-card:hover{border-color:#bbb}
+.hc-left{display:flex;align-items:center;gap:14px}
+.hc-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.hc-title{font-size:15px;font-weight:600;margin-bottom:2px}
+.hc-meta{font-size:12px;color:#999}
+.hc-arrow{font-size:20px;color:#ccc}
+.sec-lbl{font-size:11px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;margin-top:1.25rem}
+/* CARDS */
+.card{background:#fff;border-radius:12px;border:1px solid #e5e5e3;padding:1.5rem;margin-bottom:1.25rem}
+h2{font-size:16px;font-weight:600;margin-bottom:1rem}
+.lbl{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+input[type=text],input[type=date],input[type=number],textarea{width:100%;font-size:14px;padding:9px 11px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-family:inherit;outline:none;transition:border-color .15s}
+input:focus,textarea:focus{border-color:#555}
+textarea{resize:vertical;line-height:1.5}
+.col-h{display:flex;gap:8px;font-size:11px;color:#999;margin-bottom:4px;padding-right:32px}
+.col-h .ct{width:200px;flex:none}.col-h .cn{flex:1}
+.irow{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.irow input{margin:0}
+.irow .topic{width:200px;flex:none}
+.irow .note{flex:1}
+.xb{background:none;border:none;font-size:20px;cursor:pointer;color:#aaa;padding:2px 5px;line-height:1;border-radius:4px;flex-shrink:0}
+.xb:hover{color:#333;background:#f0f0ef}
+.addbtn{width:100%;padding:8px;font-size:13px;border:1px dashed #ccc;border-radius:8px;background:none;color:#888;cursor:pointer;text-align:left;margin-top:4px}
+.addbtn:hover{background:#f5f5f3}
+.savebtn{background:#1a1a1a;color:#fff;border:none;border-radius:8px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;width:100%}
+.savebtn:hover{background:#333}
+.clearbtn{background:none;border:1px solid #ddd;border-radius:8px;padding:11px 16px;font-size:14px;cursor:pointer;color:#555;width:100%}
+.clearbtn:hover{background:#f5f5f3}
+.sharebtn{font-size:12px;background:none;border:1px solid #b3d4f5;border-radius:6px;padding:5px 12px;cursor:pointer;color:#1a4a8a}
+.sharebtn:hover{background:#eaf3ff}
+.btn-row{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin-top:1rem}
+.share-row{margin-top:8px}
+.share-row .sharebtn{width:100%;padding:9px;font-size:13px}
+.ok-msg{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:1rem;display:none;background:#edfaf4;color:#1a6b44;border:1px solid #b3e8ce}
+.edit-banner{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:1rem;display:none;justify-content:space-between;align-items:center;background:#fff8e6;color:#7a5500;border:1px solid #f5d87a}
+.edit-banner span{flex:1}
+.cancel-edit{background:none;border:1px solid #f5d87a;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer;color:#7a5500;margin-left:10px;white-space:nowrap}
+.sec-divider{border:none;border-top:1px solid #eee;margin:1.25rem 0}
+/* METRICS */
+.metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.metric-box{background:#f9f9f8;border:1px solid #e5e5e3;border-radius:10px;padding:12px 10px;text-align:center}
+.metric-box .m-lbl{font-size:10px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;line-height:1.3}
+.metric-box input[type=number]{font-size:20px;font-weight:600;border:none;border-bottom:2px solid #e0e0e0;border-radius:0;background:transparent;text-align:center;padding:2px 4px;width:100%;outline:none}
+.metric-box input[type=number]:focus{border-bottom-color:#555}
+.metric-box .m-unit{font-size:11px;color:#aaa;margin-top:4px}
+/* HISTORY */
+.hist-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.hist-header h2{margin:0}
+.hist-btns{display:flex;gap:6px}
+.exportbtn{font-size:12px;background:none;border:1px solid #ddd;border-radius:6px;padding:5px 12px;cursor:pointer;color:#555}
+.exportbtn:hover{background:#f5f5f3}
+.hcard{background:#fff;border:1px solid #e5e5e3;border-radius:10px;padding:1rem 1.25rem;margin-bottom:10px}
+.hcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.hdate{font-weight:600;font-size:14px}
+.hmeta{font-size:12px;color:#888;margin-top:3px}
+.hcard-actions{display:flex;gap:6px;flex-shrink:0}
+.vbtn{font-size:12px;background:none;border:1px solid #ddd;border-radius:6px;padding:4px 12px;cursor:pointer;color:#555}
+.vbtn:hover{background:#f5f5f3}
+.editbtn{font-size:12px;background:none;border:1px solid #b3d4f5;border-radius:6px;padding:4px 10px;cursor:pointer;color:#1a4a8a}
+.editbtn:hover{background:#eaf3ff}
+.delbtn{font-size:12px;background:none;border:1px solid #fcc;border-radius:6px;padding:4px 10px;cursor:pointer;color:#c44}
+.delbtn:hover{background:#fff0f0}
+.hbody{margin-top:12px;padding-top:12px;border-top:1px solid #f0f0ef}
+.hmetrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.hm-box{background:#f9f9f8;border:1px solid #e5e5e3;border-radius:8px;padding:8px;text-align:center}
+.hm-lbl{font-size:10px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;line-height:1.3}
+.hm-val{font-size:18px;font-weight:600}
+.hi{display:flex;gap:10px;font-size:13px;margin-bottom:6px;align-items:baseline}
+.hi-n{color:#aaa;min-width:18px;font-weight:600;flex-shrink:0}
+.hi-t{width:180px;flex:none;font-weight:500}
+.hi-note{flex:1;color:#666}
+.hi-tag{font-size:10px;color:#aaa;border:1px solid #ddd;border-radius:4px;padding:1px 5px;margin-left:4px;font-weight:400}
+.hnotes{font-size:13px;color:#666;margin-top:10px;padding-left:12px;border-left:2px solid #ddd;line-height:1.6;border-radius:0}
+.empty{text-align:center;padding:2rem;color:#aaa;font-size:14px}
+/* NOC BOARDS */
+.board-section{margin-bottom:1.25rem}
+.board-title{font-size:13px;font-weight:600;color:#444;margin-bottom:8px;padding:7px 12px;background:#f5f5f3;border-radius:8px;border-left:4px solid #888}
+.board-title.backup{border-left-color:#1a4a8a}
+.board-title.ninja{border-left-color:#2d6b2d}
+.board-title.emailbd{border-left-color:#6b1a6b}
+.board-title.third{border-left-color:#8a4a1a}
+.ticket-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.ticket-row input{margin:0}
+.ticket-row .tnum{width:130px;flex:none}
+.ticket-row .tdesc{flex:1}
+.hboard-section{margin-bottom:12px}
+/* MODAL */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;padding:1.5rem;width:90%;max-width:420px}
+.modal h3{font-size:16px;font-weight:600;margin-bottom:.4rem}
+.modal p{font-size:13px;color:#888;margin-bottom:1rem}
+.modal input{margin-bottom:10px}
+.modal-type{display:flex;gap:8px;margin-bottom:1rem}
+.type-btn{flex:1;padding:8px;font-size:13px;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fff;color:#555;text-align:center}
+.type-btn.sel{border-color:#1a1a1a;background:#1a1a1a;color:#fff;font-weight:600}
+.modal-btns{display:flex;gap:8px;margin-top:1rem}
+.modal-send{background:#1a1a1a;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;flex:1}
+.modal-send:hover{background:#333}
+.modal-cancel{background:none;border:1px solid #ddd;border-radius:8px;padding:10px 16px;font-size:14px;cursor:pointer;color:#555}
+.modal-cancel:hover{background:#f5f5f3}
+
+  .row-inner{display:flex;flex-direction:column;gap:4px;flex:1}
+  .row-inner .topic{width:100%}
+  .note-ta{width:100%;font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;font-family:inherit;outline:none;resize:none;line-height:1.5;overflow:hidden;min-height:36px;transition:border-color .15s}
+  .note-ta:focus{border-color:#555;color:#1a1a1a}
+  .note-ta::placeholder{color:#bbb}
+  .irow{align-items:flex-start}
+  .ticket-row{align-items:flex-start}
+  .ticket-row .tnum{margin-top:2px}
+
+  .row-inner{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+  .row-inner .topic{width:100%}
+  .note-ta{width:100%;font-size:13px;padding:7px 10px;border:1px solid #e0e0e0;border-radius:8px;background:#fafafa;color:#444;font-family:inherit;outline:none;resize:none;line-height:1.65;overflow:hidden;min-height:38px;transition:border-color .15s,background .15s}
+  .note-ta:focus{border-color:#555;background:#fff;color:#1a1a1a}
+  .note-ta::placeholder{color:#ccc;font-size:12px}
+  .irow{align-items:flex-start}
+  .ticket-row{align-items:flex-start}
+  .ticket-row .tnum{margin-top:0}
+  @media(max-width:560px){
+  .metrics-grid,.hmetrics{grid-template-columns:repeat(3,1fr)}
+  .irow{flex-wrap:wrap}.irow .topic{width:100%}
+  .ticket-row{flex-wrap:wrap}.ticket-row .tnum{width:100%}
+  .nav-title{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-title">Company Agendas</div>
+  <button class="nav-btn active" onclick="showPane('home')">Home</button>
+  <button class="nav-btn" onclick="showPane('mon')">Monday</button>
+  <button class="nav-btn" onclick="showPane('thu')">Thursday</button>
+  <button class="nav-btn" onclick="showPane('hr')">HR Call</button>
+  <button class="nav-btn" onclick="showPane('tlh')">Tech Huddle</button>
+  <button class="nav-btn" onclick="showPane('whi')">Whitney</button>
+  <button class="nav-btn" onclick="showPane('noc')">NOC</button>
+</nav>
+
+<!-- HOME -->
+<div class="pane active" id="pane-home">
+  <div style="max-width:520px;margin:0 auto">
+    <div class="sec-lbl">Weekly</div>
+    <div class="home-grid">
+      <div class="home-card" onclick="showPane('mon')"><div class="hc-left"><div class="hc-icon" style="background:#e8f5e9">📋</div><div><div class="hc-title">Monday Company Call</div><div class="hc-meta">Every Monday · Previous week metrics</div></div></div><div class="hc-arrow">›</div></div>
+      <div class="home-card" onclick="showPane('thu')"><div class="hc-left"><div class="hc-icon" style="background:#e8f0fb">📋</div><div><div class="hc-title">Thursday Company Call</div><div class="hc-meta">Every Thursday · General agenda</div></div></div><div class="hc-arrow">›</div></div>
+      <div class="home-card" onclick="showPane('hr')"><div class="hc-left"><div class="hc-icon" style="background:#fce8f0">👥</div><div><div class="hc-title">Thursday HR Call</div><div class="hc-meta">Every Thursday · HR agenda</div></div></div><div class="hc-arrow">›</div></div>
+      <div class="home-card" onclick="showPane('whi')"><div class="hc-left"><div class="hc-icon" style="background:#e8faf0">📞</div><div><div class="hc-title">Calls with Whitney</div><div class="hc-meta">Weekly · General agenda</div></div></div><div class="hc-arrow">›</div></div>
+      <div class="home-card" onclick="showPane('noc')"><div class="hc-left"><div class="hc-icon" style="background:#eef0ff">🖥️</div><div><div class="hc-title">NOC Call</div><div class="hc-meta">Weekly · Ticket boards review</div></div></div><div class="hc-arrow">›</div></div>
+    </div>
+    <div class="sec-lbl">Daily</div>
+    <div class="home-grid">
+      <div class="home-card" onclick="showPane('tlh')"><div class="hc-left"><div class="hc-icon" style="background:#fff8e6">⚡</div><div><div class="hc-title">Tech Lead Huddle</div><div class="hc-meta">Daily · Current board metrics</div></div></div><div class="hc-arrow">›</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MONDAY -->
+<div class="pane" id="pane-mon">
+  <div id="mon-ok" class="ok-msg"></div>
+  <div id="mon-eb" class="edit-banner"><span id="mon-ebt"></span><button class="cancel-edit" onclick="cancelEdit('mon')">Cancel edit</button></div>
+  <div class="card">
+    <h2>Previous Week Metrics</h2>
+    <div class="metrics-grid">
+      <div class="metric-box"><div class="m-lbl">CSAT</div><input type="number" id="mon-csat" placeholder="—" min="0" max="100" step="0.1" style="color:#1a6b44"/><div class="m-unit">score / 100</div></div>
+      <div class="metric-box"><div class="m-lbl">ATR</div><input type="number" id="mon-atr" placeholder="—" min="0" step="0.1" style="color:#1a4a8a"/><div class="m-unit">avg time to resolve</div></div>
+      <div class="metric-box"><div class="m-lbl">Open Tickets</div><input type="number" id="mon-open" placeholder="—" min="0" step="1" style="color:#8a4a1a"/><div class="m-unit">count</div></div>
+      <div class="metric-box"><div class="m-lbl">Closed Tickets</div><input type="number" id="mon-closed" placeholder="—" min="0" step="1" style="color:#2d6b2d"/><div class="m-unit">count</div></div>
+      <div class="metric-box"><div class="m-lbl">FCR</div><input type="number" id="mon-fcr" placeholder="—" min="0" max="100" step="0.1" style="color:#6b1a6b"/><div class="m-unit">% first contact</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 id="mon-ftitle">New Agenda</h2>
+    <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="mon-d"/></div>
+    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="mon-sw"></div><button class="addbtn" onclick="addRow('mon','S')">+ Add standing item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="mon-iw"></div><button class="addbtn" onclick="addRow('mon','I')">+ Add item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <textarea id="mon-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
+    <div class="btn-row"><button class="savebtn" id="mon-sb" onclick="saveAgenda('mon')">Save to History</button><button class="clearbtn" onclick="clearForm('mon')">Clear</button></div>
+    <div class="share-row"><button class="sharebtn" onclick="openModal('mon','agenda')">✉ Share this agenda</button></div>
+  </div>
+  <div class="card">
+    <div class="hist-header"><h2>History <span id="mon-hct" style="font-size:13px;font-weight:400;color:#888"></span></h2><div class="hist-btns"><button class="sharebtn" onclick="openModal('mon','history')">✉ Share history</button><button class="exportbtn" onclick="doExport('mon')">Export</button></div></div>
+    <div id="mon-hl"><div class="empty">No history yet.</div></div>
+  </div>
+</div>
+
+<!-- THURSDAY -->
+<div class="pane" id="pane-thu">
+  <div id="thu-ok" class="ok-msg"></div>
+  <div id="thu-eb" class="edit-banner"><span id="thu-ebt"></span><button class="cancel-edit" onclick="cancelEdit('thu')">Cancel edit</button></div>
+  <div class="card">
+    <h2 id="thu-ftitle">New Agenda</h2>
+    <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="thu-d"/></div>
+    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="thu-sw"></div><button class="addbtn" onclick="addRow('thu','S')">+ Add standing item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="thu-iw"></div><button class="addbtn" onclick="addRow('thu','I')">+ Add item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <textarea id="thu-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
+    <div class="btn-row"><button class="savebtn" id="thu-sb" onclick="saveAgenda('thu')">Save to History</button><button class="clearbtn" onclick="clearForm('thu')">Clear</button></div>
+    <div class="share-row"><button class="sharebtn" onclick="openModal('thu','agenda')">✉ Share this agenda</button></div>
+  </div>
+  <div class="card">
+    <div class="hist-header"><h2>History <span id="thu-hct" style="font-size:13px;font-weight:400;color:#888"></span></h2><div class="hist-btns"><button class="sharebtn" onclick="openModal('thu','history')">✉ Share history</button><button class="exportbtn" onclick="doExport('thu')">Export</button></div></div>
+    <div id="thu-hl"><div class="empty">No history yet.</div></div>
+  </div>
+</div>
+
+<!-- HR -->
+<div class="pane" id="pane-hr">
+  <div id="hr-ok" class="ok-msg"></div>
+  <div id="hr-eb" class="edit-banner"><span id="hr-ebt"></span><button class="cancel-edit" onclick="cancelEdit('hr')">Cancel edit</button></div>
+  <div class="card">
+    <h2 id="hr-ftitle">New Agenda</h2>
+    <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="hr-d"/></div>
+    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="hr-sw"></div><button class="addbtn" onclick="addRow('hr','S')">+ Add standing item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="hr-iw"></div><button class="addbtn" onclick="addRow('hr','I')">+ Add item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <textarea id="hr-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
+    <div class="btn-row"><button class="savebtn" id="hr-sb" onclick="saveAgenda('hr')">Save to History</button><button class="clearbtn" onclick="clearForm('hr')">Clear</button></div>
+    <div class="share-row"><button class="sharebtn" onclick="openModal('hr','agenda')">✉ Share this agenda</button></div>
+  </div>
+  <div class="card">
+    <div class="hist-header"><h2>History <span id="hr-hct" style="font-size:13px;font-weight:400;color:#888"></span></h2><div class="hist-btns"><button class="sharebtn" onclick="openModal('hr','history')">✉ Share history</button><button class="exportbtn" onclick="doExport('hr')">Export</button></div></div>
+    <div id="hr-hl"><div class="empty">No history yet.</div></div>
+  </div>
+</div>
+
+<!-- TECH HUDDLE -->
+<div class="pane" id="pane-tlh">
+  <div id="tlh-ok" class="ok-msg"></div>
+  <div id="tlh-eb" class="edit-banner"><span id="tlh-ebt"></span><button class="cancel-edit" onclick="cancelEdit('tlh')">Cancel edit</button></div>
+  <div class="card">
+    <h2>Current Board Metrics</h2>
+    <div class="metrics-grid">
+      <div class="metric-box"><div class="m-lbl">CSAT</div><input type="number" id="tlh-csat" placeholder="—" min="0" max="100" step="0.1" style="color:#1a6b44"/><div class="m-unit">score / 100</div></div>
+      <div class="metric-box"><div class="m-lbl">ATR</div><input type="number" id="tlh-atr" placeholder="—" min="0" step="0.1" style="color:#1a4a8a"/><div class="m-unit">avg time to resolve</div></div>
+      <div class="metric-box"><div class="m-lbl">DSO Board Count</div><input type="number" id="tlh-dso" placeholder="—" min="0" step="1" style="color:#6b3a1a"/><div class="m-unit">count</div></div>
+      <div class="metric-box"><div class="m-lbl">Help Desk Count</div><input type="number" id="tlh-helpdesk" placeholder="—" min="0" step="1" style="color:#6b1a6b"/><div class="m-unit">count</div></div>
+      <div class="metric-box"><div class="m-lbl">Support Board Count</div><input type="number" id="tlh-support" placeholder="—" min="0" step="1" style="color:#1a5a6b"/><div class="m-unit">count</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 id="tlh-ftitle">New Agenda</h2>
+    <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="tlh-d"/></div>
+    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="tlh-sw"></div><button class="addbtn" onclick="addRow('tlh','S')">+ Add standing item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">Today's Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="tlh-iw"></div><button class="addbtn" onclick="addRow('tlh','I')">+ Add item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <textarea id="tlh-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
+    <div class="btn-row"><button class="savebtn" id="tlh-sb" onclick="saveAgenda('tlh')">Save to History</button><button class="clearbtn" onclick="clearForm('tlh')">Clear</button></div>
+    <div class="share-row"><button class="sharebtn" onclick="openModal('tlh','agenda')">✉ Share this agenda</button></div>
+  </div>
+  <div class="card">
+    <div class="hist-header"><h2>History <span id="tlh-hct" style="font-size:13px;font-weight:400;color:#888"></span></h2><div class="hist-btns"><button class="sharebtn" onclick="openModal('tlh','history')">✉ Share history</button><button class="exportbtn" onclick="doExport('tlh')">Export</button></div></div>
+    <div id="tlh-hl"><div class="empty">No history yet.</div></div>
+  </div>
+</div>
+
+<!-- WHITNEY -->
+<div class="pane" id="pane-whi">
+  <div id="whi-ok" class="ok-msg"></div>
+  <div id="whi-eb" class="edit-banner"><span id="whi-ebt"></span><button class="cancel-edit" onclick="cancelEdit('whi')">Cancel edit</button></div>
+  <div class="card">
+    <h2 id="whi-ftitle">New Agenda</h2>
+    <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="whi-d"/></div>
+    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="whi-sw"></div><button class="addbtn" onclick="addRow('whi','S')">+ Add standing item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="whi-iw"></div><button class="addbtn" onclick="addRow('whi','I')">+ Add item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <textarea id="whi-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
+    <div class="btn-row"><button class="savebtn" id="whi-sb" onclick="saveAgenda('whi')">Save to History</button><button class="clearbtn" onclick="clearForm('whi')">Clear</button></div>
+    <div class="share-row"><button class="sharebtn" onclick="openModal('whi','agenda')">✉ Share this agenda</button></div>
+  </div>
+  <div class="card">
+    <div class="hist-header"><h2>History <span id="whi-hct" style="font-size:13px;font-weight:400;color:#888"></span></h2><div class="hist-btns"><button class="sharebtn" onclick="openModal('whi','history')">✉ Share history</button><button class="exportbtn" onclick="doExport('whi')">Export</button></div></div>
+    <div id="whi-hl"><div class="empty">No history yet.</div></div>
+  </div>
+</div>
+
+<!-- NOC -->
+<div class="pane" id="pane-noc">
+  <div id="noc-ok" class="ok-msg"></div>
+  <div id="noc-eb" class="edit-banner"><span id="noc-ebt"></span><button class="cancel-edit" onclick="cancelEdit('noc')">Cancel edit</button></div>
+  <div class="card">
+    <h2 id="noc-ftitle">New Agenda</h2>
+    <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="noc-d"/></div>
+    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="noc-sw"></div><button class="addbtn" onclick="addRow('noc','S')">+ Add standing item</button>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
+    <div class="col-h"><span>Topic / Notes</span></div>
+    <div id="noc-iw"></div><button class="addbtn" onclick="addRow('noc','I')">+ Add item</button>
+    <hr class="sec-divider"/>
+    <!-- BOARDS -->
+    <div class="board-section">
+      <div class="board-title backup">Backup Board</div>
+      <div class="col-h" style="padding-right:32px"><span style="width:130px;flex:none">Ticket #</span><span style="flex:1">Notes</span></div>
+      <div id="noc-backup-wrap"></div>
+      <button class="addbtn" onclick="addTicket('backup')">+ Add ticket</button>
+    </div>
+    <div class="board-section">
+      <div class="board-title ninja">Ninja Board</div>
+      <div class="col-h" style="padding-right:32px"><span style="width:130px;flex:none">Ticket #</span><span style="flex:1">Notes</span></div>
+      <div id="noc-ninja-wrap"></div>
+      <button class="addbtn" onclick="addTicket('ninja')">+ Add ticket</button>
+    </div>
+    <div class="board-section">
+      <div class="board-title emailbd">Email Board</div>
+      <div class="col-h" style="padding-right:32px"><span style="width:130px;flex:none">Ticket #</span><span style="flex:1">Notes</span></div>
+      <div id="noc-emailbd-wrap"></div>
+      <button class="addbtn" onclick="addTicket('emailbd')">+ Add ticket</button>
+    </div>
+    <div class="board-section">
+      <div class="board-title third">3rd Party</div>
+      <div class="col-h" style="padding-right:32px"><span style="width:130px;flex:none">Ticket #</span><span style="flex:1">Notes</span></div>
+      <div id="noc-third-wrap"></div>
+      <button class="addbtn" onclick="addTicket('third')">+ Add ticket</button>
+    </div>
+    <hr class="sec-divider"/>
+    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <textarea id="noc-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
+    <div class="btn-row"><button class="savebtn" id="noc-sb" onclick="saveAgenda('noc')">Save to History</button><button class="clearbtn" onclick="clearForm('noc')">Clear</button></div>
+    <div class="share-row"><button class="sharebtn" onclick="openModal('noc','agenda')">✉ Share this agenda</button></div>
+  </div>
+  <div class="card">
+    <div class="hist-header"><h2>History <span id="noc-hct" style="font-size:13px;font-weight:400;color:#888"></span></h2><div class="hist-btns"><button class="sharebtn" onclick="openModal('noc','history')">✉ Share history</button><button class="exportbtn" onclick="doExport('noc')">Export</button></div></div>
+    <div id="noc-hl"><div class="empty">No history yet.</div></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal">
+    <h3 id="modal-title">Share agenda</h3>
+    <p id="modal-desc">Enter the recipient's email address.</p>
+    <div class="modal-type" id="modal-type-row">
+      <div class="type-btn sel" id="type-agenda" onclick="selType('agenda')">Current agenda</div>
+      <div class="type-btn" id="type-history" onclick="selType('history')">Full history</div>
+    </div>
+    <input type="email" id="modal-email" placeholder="recipient@email.com"/>
+    <div class="modal-btns">
+      <button class="modal-send" onclick="sendEmail()">Open in mail app</button>
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// ── AUTO GROW TEXTAREA ────────────────────────────────────────────────────────
+function autoGrow(el){
+  el.style.height='auto';
+  el.style.height=(el.scrollHeight)+'px';
+}
+function autoGrowAll(){
+  document.querySelectorAll('.note-ta').forEach(function(el){
+    if(el.value&&el.value.trim()!==''){
+      var lines=el.value.split('\n');
+      lines=lines.map(function(l){return l.trim()===''?l:(l.startsWith('• ')?l:'• '+l)});
+      el.value=lines.join('\n');
+    }
+    autoGrow(el);
+  });
+}
+
+function initNotesTA(k){
+  var el=document.getElementById(k+'-n');
+  if(!el)return;
+  // Set initial bullet if empty
+  if(!el.value||el.value.trim()===''){el.value='• ';}
+  autoGrow(el);
+  // Remove existing listeners by cloning
+  var newEl=el.cloneNode(true);
+  el.parentNode.replaceChild(newEl,el);
+  newEl.addEventListener('focus',function(){
+    if(!this.value||this.value.trim()===''){this.value='• ';autoGrow(this)}
+  });
+  newEl.addEventListener('keydown',handleBulletKeydown);
+  newEl.addEventListener('input',function(){
+    handleBullet({target:this,inputType:'input'});
+    autoGrow(this);
+  });
+}
+
+
+// ── AUTO GROW & BULLETS ──────────────────────────────────────────────────────
+function autoGrow(el){
+  el.style.height='auto';
+  el.style.height=el.scrollHeight+'px';
+}
+function autoGrowAll(){
+  document.querySelectorAll('.note-ta').forEach(function(el){
+    if(el.value&&el.value.trim()!==''){
+      var lines=el.value.split('\n');
+      lines=lines.map(function(l){return l.trim()===''?l:(l.startsWith('• ')?l:'• '+l)});
+      el.value=lines.join('\n');
+    }
+    autoGrow(el);
+  });
+}
+
+function initNotesTA(k){
+  var el=document.getElementById(k+'-n');
+  if(!el)return;
+  // Set initial bullet if empty
+  if(!el.value||el.value.trim()===''){el.value='• ';}
+  autoGrow(el);
+  // Remove existing listeners by cloning
+  var newEl=el.cloneNode(true);
+  el.parentNode.replaceChild(newEl,el);
+  newEl.addEventListener('focus',function(){
+    if(!this.value||this.value.trim()===''){this.value='• ';autoGrow(this)}
+  });
+  newEl.addEventListener('keydown',handleBulletKeydown);
+  newEl.addEventListener('input',function(){
+    handleBullet({target:this,inputType:'input'});
+    autoGrow(this);
+  });
+}
+
+function initBullet(el){
+  if(!el.value||el.value===''){el.value='• '}
+  autoGrow(el);
+}
+
+function handleBullet(e){
+  var el=e.target;
+  var val=el.value;
+  // Ensure starts with bullet
+  if(val.length>0&&!val.startsWith('• ')){
+    var pos=el.selectionStart,end=el.selectionEnd;
+    el.value='• '+val.replace(/^[•\s]*/,'');
+    el.selectionStart=pos+2;el.selectionEnd=end+2;
+  }
+  if(val===''||val==='•'||val==='• '&&e.inputType==='deleteContentBackward'){
+    el.value='• ';
+    var len=el.value.length;
+    el.selectionStart=len;el.selectionEnd=len;
+  }
+  autoGrow(el);
+}
+
+function handleBulletKeydown(e){
+  var el=e.target;
+  if(e.key==='Enter'){
+    e.preventDefault();
+    var start=el.selectionStart;
+    var before=el.value.substring(0,start);
+    var after=el.value.substring(el.selectionStart);
+    el.value=before+'\n• '+after;
+    var pos=start+3;
+    el.selectionStart=pos;el.selectionEnd=pos;
+    autoGrow(el);
+    // trigger oninput to save
+    el.dispatchEvent(new Event('input'));
+  }
+  // Prevent deleting the bullet prefix on backspace
+  if(e.key==='Backspace'){
+    var lines=el.value.split('\n');
+    var pos2=el.selectionStart;
+    var lineStart=el.value.lastIndexOf('\n',pos2-1)+1;
+    var curLine=el.value.substring(lineStart,pos2);
+    if(curLine==='• '||curLine==='•'){
+      e.preventDefault();
+      // remove this line if it's empty bullet
+      if(lineStart>0){
+        el.value=el.value.substring(0,lineStart-1)+el.value.substring(lineStart+curLine.length);
+        el.selectionStart=lineStart-1;el.selectionEnd=lineStart-1;
+        autoGrow(el);
+        el.dispatchEvent(new Event('input'));
+      }
+    }
+  }
+}
+
+// ── STORAGE ───────────────────────────────────────────────────────────────────
+function lsGet(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function x(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function gv(id){var el=document.getElementById(id);return el?el.value.trim():''}
+function sv(id,val){var el=document.getElementById(id);if(el)el.value=val||''}
+
+// ── DATE HELPERS ──────────────────────────────────────────────────────────────
+function toDay(){return new Date().toISOString().split('T')[0]}
+function nxtMonday(){var d=new Date(),day=d.getDay(),diff=day===1?0:(8-day)%7||7;d.setDate(d.getDate()+diff);return d.toISOString().split('T')[0]}
+function nxtThursday(){var d=new Date(),day=d.getDay(),diff=(4-day+7)%7||7;d.setDate(d.getDate()+diff);return d.toISOString().split('T')[0]}
+function fmtD(d){var p=d.split('-');try{return new Date(+p[0],+p[1]-1,+p[2]).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}catch(e){return d}}
+
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+var CFG={
+  mon:{ls_h:'ca_mon_h',ls_s:'ca_mon_s',label:'Monday Company Call',defDate:nxtMonday,
+    defS:[{t:'Team check-in / wins',n:''},{t:'Metrics review',n:''},{t:'Open tickets & escalations',n:''},{t:'Project status updates',n:''},{t:'Announcements / blockers',n:''}],
+    metrics:['csat','atr','open','closed','fcr'],mLabels:{csat:'CSAT',atr:'ATR',open:'Open Tickets',closed:'Closed Tickets',fcr:'FCR'},mColors:{csat:'#1a6b44',atr:'#1a4a8a',open:'#8a4a1a',closed:'#2d6b2d',fcr:'#6b1a6b'},
+    exportTitle:'MONDAY COMPANY CALL'},
+  thu:{ls_h:'ca_thu_h',ls_s:'ca_thu_s',label:'Thursday Company Call',defDate:nxtThursday,
+    defS:[{t:'Team check-in / wins',n:''},{t:'Project status updates',n:''},{t:'Open issues & escalations',n:''},{t:'Announcements / blockers',n:''}],
+    metrics:[],mLabels:{},mColors:{},exportTitle:'THURSDAY COMPANY CALL'},
+  hr:{ls_h:'ca_hr_h',ls_s:'ca_hr_s',label:'Thursday HR Call',defDate:nxtThursday,
+    defS:[{t:'Team check-in / wins',n:''},{t:'Hiring & recruitment updates',n:''},{t:'Employee relations',n:''},{t:'Policy & compliance updates',n:''},{t:'Announcements / action items',n:''}],
+    metrics:[],mLabels:{},mColors:{},exportTitle:'THURSDAY HR CALL'},
+  tlh:{ls_h:'ca_tlh_h',ls_s:'ca_tlh_s',label:'Tech Lead Huddle',defDate:toDay,
+    defS:[{t:'Board review',n:''},{t:'Open escalations',n:''},{t:'Team blockers',n:''},{t:'Priorities for today',n:''}],
+    metrics:['csat','atr','dso','helpdesk','support'],mLabels:{csat:'CSAT',atr:'ATR',dso:'DSO Board',helpdesk:'Help Desk',support:'Support Board'},mColors:{csat:'#1a6b44',atr:'#1a4a8a',dso:'#6b3a1a',helpdesk:'#6b1a6b',support:'#1a5a6b'},
+    exportTitle:'TECH LEAD HUDDLE'},
+  whi:{ls_h:'ca_whi_h',ls_s:'ca_whi_s',label:'Calls with Whitney',defDate:nxtThursday,
+    defS:[{t:'Team check-in / wins',n:''},{t:'Project status updates',n:''},{t:'Open issues & escalations',n:''},{t:'Announcements / blockers',n:''}],
+    metrics:[],mLabels:{},mColors:{},exportTitle:'CALLS WITH WHITNEY'},
+  noc:{ls_h:'ca_noc_h',ls_s:'ca_noc_s',label:'NOC Call',defDate:nxtMonday,
+    defS:[{t:'Team check-in',n:''},{t:'Open escalations',n:''},{t:'Upcoming maintenance',n:''}],
+    metrics:[],mLabels:{},mColors:{},exportTitle:'NOC CALL'}
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var ST={};
+Object.keys(CFG).forEach(function(k){
+  ST[k]={S:lsGet(CFG[k].ls_s)||CFG[k].defS.map(function(s){return{t:s.t,n:s.n}}),I:[],H:lsGet(CFG[k].ls_h)||[],editing:null,expanded:null};
+});
+
+var NOC_BOARDS={
+  backup: lsGet('ca_noc_backup')||[],
+  ninja:  lsGet('ca_noc_ninja')||[],
+  emailbd:lsGet('ca_noc_emailbd')||[],
+  third:  lsGet('ca_noc_third')||[]
+};
+var BOARD_LABELS={backup:'Backup Board',ninja:'Ninja Board',emailbd:'Email Board',third:'3rd Party'};
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function showPane(id){
+  document.querySelectorAll('.pane').forEach(function(el){el.classList.remove('active')});
+  document.querySelectorAll('.nav-btn').forEach(function(el){el.classList.remove('active')});
+  document.getElementById('pane-'+id).classList.add('active');
+  var order=['home','mon','thu','hr','tlh','whi','noc'];
+  var idx=order.indexOf(id);
+  var btns=document.querySelectorAll('.nav-btn');
+  if(idx>=0&&btns[idx])btns[idx].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── AGENDA ROWS ───────────────────────────────────────────────────────────────
+function renderRows(k,type){
+  var arr=type==='S'?ST[k].S:ST[k].I;
+  var wrap=document.getElementById(k+(type==='S'?'-sw':'-iw'));
+  if(!wrap)return;
+  wrap.innerHTML='';
+  arr.forEach(function(item,i){
+    var r=document.createElement('div');r.className='irow';
+    var isS=(type==='S');
+    var topicInput=document.createElement('input');
+    topicInput.type='text';topicInput.className='topic';topicInput.placeholder='Topic';topicInput.value=item.t||'';
+    topicInput.oninput=function(){
+      if(isS){ST[k].S[i].t=this.value;lsSet(CFG[k].ls_s,ST[k].S)}
+      else{ST[k].I[i].t=this.value}
+    };
+    var noteTA=document.createElement('textarea');
+    noteTA.className='note-ta';noteTA.placeholder='Notes — add as much detail as needed';noteTA.rows=2;noteTA.value=item.n||'';
+    noteTA.oninput=function(){handleBullet({target:this,inputType:'input'});if(isS){ST[k].S[i].n=this.value;lsSet(CFG[k].ls_s,ST[k].S)}else{ST[k].I[i].n=this.value}};
+    noteTA.addEventListener('keydown',handleBulletKeydown);
+    noteTA.addEventListener('focus',function(){if(!this.value||this.value.trim()===''){this.value='• ';autoGrow(this)}});
+    var inner=document.createElement('div');inner.className='row-inner';
+    inner.appendChild(topicInput);inner.appendChild(noteTA);
+    var xbtn=document.createElement('button');xbtn.className='xb';xbtn.innerHTML='×';
+    xbtn.onclick=function(){
+      if(isS){ST[k].S.splice(i,1);lsSet(CFG[k].ls_s,ST[k].S);renderRows(k,'S')}
+      else{ST[k].I.splice(i,1);renderRows(k,'I')}
+    };
+    r.appendChild(inner);r.appendChild(xbtn);
+    wrap.appendChild(r);
+    setTimeout(function(){autoGrow(noteTA)},10);
+  });
+}
+function addRow(k,type){
+  if(type==='S'){ST[k].S.push({t:'',n:''});lsSet(CFG[k].ls_s,ST[k].S);renderRows(k,'S')}
+  else{ST[k].I.push({t:'',n:''});renderRows(k,'I')}
+  setTimeout(autoGrowAll,10);
+}
+
+// ── TICKET BOARDS ─────────────────────────────────────────────────────────────
+function renderTickets(board){
+  var wrap=document.getElementById('noc-'+board+'-wrap');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  NOC_BOARDS[board].forEach(function(tk,i){
+    var r=document.createElement('div');r.className='ticket-row';
+    var numInput=document.createElement('input');
+    numInput.type='text';numInput.className='tnum';numInput.placeholder='Ticket #';numInput.value=tk.num||'';
+    numInput.oninput=function(){NOC_BOARDS[board][i].num=this.value;lsSet('ca_noc_'+board,NOC_BOARDS[board])};
+    var noteTA=document.createElement('textarea');
+    noteTA.className='note-ta';noteTA.placeholder='Notes — add escalation details, steps taken, status...';noteTA.rows=2;noteTA.value=tk.desc||'';
+    noteTA.oninput=function(){handleBullet({target:this,inputType:'input'});NOC_BOARDS[board][i].desc=this.value;lsSet('ca_noc_'+board,NOC_BOARDS[board])};
+    noteTA.addEventListener('keydown',handleBulletKeydown);
+    noteTA.addEventListener('focus',function(){if(!this.value||this.value.trim()===''){this.value='• ';autoGrow(this)}});
+    var inner=document.createElement('div');inner.className='row-inner';
+    inner.appendChild(numInput);inner.appendChild(noteTA);
+    var xbtn=document.createElement('button');xbtn.className='xb';xbtn.innerHTML='×';
+    xbtn.onclick=function(){NOC_BOARDS[board].splice(i,1);lsSet('ca_noc_'+board,NOC_BOARDS[board]);renderTickets(board)};
+    r.appendChild(inner);r.appendChild(xbtn);
+    wrap.appendChild(r);
+    setTimeout(function(){autoGrow(noteTA)},10);
+  });
+}
+function addTicket(board){NOC_BOARDS[board].push({num:'',desc:''});lsSet('ca_noc_'+board,NOC_BOARDS[board]);renderTickets(board)}
+function renderAllTickets(){Object.keys(NOC_BOARDS).forEach(renderTickets)}
+
+// ── METRICS ───────────────────────────────────────────────────────────────────
+function getMetrics(k){var m={};CFG[k].metrics.forEach(function(f){m[f]=gv(k+'-'+f)});return m}
+function setMetrics(k,m){CFG[k].metrics.forEach(function(f){sv(k+'-'+f,m&&m[f]?m[f]:'')});  }
+function clearMetrics(k){CFG[k].metrics.forEach(function(f){sv(k+'-'+f,'')})}
+
+// ── FORM ──────────────────────────────────────────────────────────────────────
+function clearForm(k){
+  ST[k].I=[];ST[k].editing=null;
+  sv(k+'-n','• ');sv(k+'-d',CFG[k].defDate());
+  clearMetrics(k);
+  var ft=document.getElementById(k+'-ftitle');if(ft)ft.textContent='New Agenda';
+  var sb=document.getElementById(k+'-sb');if(sb)sb.textContent='Save to History';
+  var eb=document.getElementById(k+'-eb');if(eb)eb.style.display='none';
+  renderRows(k,'I');
+  if(k==='noc'){Object.keys(NOC_BOARDS).forEach(function(b){NOC_BOARDS[b]=[];lsSet('ca_noc_'+b,[]);renderTickets(b)})}
+}
+function cancelEdit(k){clearForm(k)}
+
+function loadForEdit(k,date){
+  var rec=ST[k].H.find(function(h){return h.date===date});
+  if(!rec)return;
+  ST[k].editing=date;
+  sv(k+'-d',rec.date);sv(k+'-n',rec.notes&&rec.notes.trim()!==''?rec.notes:'• ');
+  setMetrics(k,rec.metrics);
+  ST[k].I=rec.items.filter(function(it){return!it.st}).map(function(it){return{t:it.t,n:it.n||''}});
+  renderRows(k,'I');
+  if(k==='noc'&&rec.boards){Object.keys(NOC_BOARDS).forEach(function(b){NOC_BOARDS[b]=(rec.boards[b]||[]).map(function(t){return{num:t.num||'',desc:t.desc||''}});lsSet('ca_noc_'+b,NOC_BOARDS[b]);renderTickets(b)})}
+  var ft=document.getElementById(k+'-ftitle');if(ft)ft.textContent='Editing Record';
+  var sb=document.getElementById(k+'-sb');if(sb)sb.textContent='Update Record';
+  var ebt=document.getElementById(k+'-ebt');if(ebt)ebt.textContent='Editing: '+fmtD(date)+' — make changes and click Update Record.';
+  var eb=document.getElementById(k+'-eb');if(eb)eb.style.display='flex';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function saveAgenda(k){
+  var date=gv(k+'-d');
+  if(!date){alert('Please pick a date first.');return}
+  var all=ST[k].S.map(function(s){return{t:s.t,n:s.n||'',st:true}})
+    .concat(ST[k].I.map(function(i){return{t:i.t,n:i.n||'',st:false}}));
+  var boards=null;
+  if(k==='noc'){boards={};Object.keys(NOC_BOARDS).forEach(function(b){boards[b]=NOC_BOARDS[b].map(function(t){return{num:t.num,desc:t.desc}})})}
+  var rec={date:date,metrics:getMetrics(k),items:all,notes:gv(k+'-n'),boards:boards,saved:new Date().toISOString()};
+  var idx=ST[k].H.findIndex(function(h){return h.date===date});
+  if(idx>=0)ST[k].H[idx]=rec;else ST[k].H.unshift(rec);
+  ST[k].H.sort(function(a,b){return b.date.localeCompare(a.date)});
+  lsSet(CFG[k].ls_h,ST[k].H);lsSet(CFG[k].ls_s,ST[k].S);
+  var wasEditing=ST[k].editing;
+  clearForm(k);renderHistory(k);
+  var msg=document.getElementById(k+'-ok');
+  if(msg){msg.textContent=(wasEditing?'Record updated for ':'Saved for ')+fmtD(date);msg.style.display='block';setTimeout(function(){msg.style.display='none'},3500)}
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function mv(val,pct){return(val!==''&&val!==undefined&&val!==null&&val!=='0'||val==='0')?val+(pct?'%':''):'—'}
+
+function renderHistory(k){
+  var H=ST[k].H;
+  var hct=document.getElementById(k+'-hct');if(hct)hct.textContent=H.length?'('+H.length+' meetings)':'';
+  var w=document.getElementById(k+'-hl');if(!w)return;
+  if(!H.length){w.innerHTML='<div class="empty">No history yet — save your first agenda above.</div>';return}
+  w.innerHTML='';
+  H.forEach(function(rec,i){
+    var card=document.createElement('div');card.className='hcard';
+    var isEx=ST[k].expanded===i;
+    var m=rec.metrics||{};
+    var body='';
+    if(isEx){
+      body='<div class="hbody">';
+      if(CFG[k].metrics.length){
+        body+='<div class="hmetrics">';
+        CFG[k].metrics.forEach(function(f){body+='<div class="hm-box"><div class="hm-lbl">'+CFG[k].mLabels[f]+'</div><div class="hm-val" style="color:'+CFG[k].mColors[f]+'">'+mv(m[f],f==='fcr')+'</div></div>'});
+        body+='</div>';
+      }
+      rec.items.forEach(function(it,j){
+        body+='<div class="hi"><span class="hi-n">'+(j+1)+'.</span><span class="hi-t">'+x(it.t)+(it.st?'<span class="hi-tag">standing</span>':'')+'</span><span class="hi-note">'+x(it.n||'')+'</span></div>';
+      });
+      if(k==='noc'&&rec.boards){
+        Object.keys(BOARD_LABELS).forEach(function(b){
+          var brd=rec.boards[b];
+          if(brd&&brd.length){
+            body+='<div class="hboard-section"><div class="board-title '+b+'" style="margin-top:10px;margin-bottom:6px">'+BOARD_LABELS[b]+'</div>';
+            brd.forEach(function(tk,ti){body+='<div class="hi"><span class="hi-n">'+(ti+1)+'.</span><span class="hi-t">'+x(tk.num||'—')+'</span><span class="hi-note">'+x(tk.desc||'')+'</span></div>'});
+            body+='</div>';
+          }
+        });
+      }
+      if(rec.notes)body+='<div class="hnotes">'+x(rec.notes).replace(/\n/g,'<br>')+'</div>';
+      body+='</div>';
+    }
+    var sd=rec.date.replace(/'/g,'');
+    card.innerHTML='<div class="hcard-top"><div><div class="hdate">'+fmtD(rec.date)+'</div>'
+      +'<div class="hmeta">'+rec.items.length+' items'+(m.csat?' · CSAT '+m.csat:'')+'</div></div>'
+      +'<div class="hcard-actions">'
+      +'<button class="vbtn" onclick="ST[\''+k+'\'].expanded=ST[\''+k+'\'].expanded==='+i+'?null:'+i+';renderHistory(\''+k+'\')">'+(isEx?'Hide':'View')+'</button>'
+      +'<button class="editbtn" onclick="loadForEdit(\''+k+'\',\''+sd+'\')">Edit</button>'
+      +'<button class="delbtn" onclick="delRec(\''+k+'\',\''+sd+'\')">Delete</button>'
+      +'</div></div>'+body;
+    w.appendChild(card);
+  });
+}
+
+function delRec(k,date){
+  if(!confirm('Delete record for '+date+'?'))return;
+  ST[k].H=ST[k].H.filter(function(h){return h.date!==date});
+  lsSet(CFG[k].ls_h,ST[k].H);ST[k].expanded=null;renderHistory(k);
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function buildText(k,fromHistory,boardFilter){
+  // boardFilter: if set, only include that specific board section (for NOC board-specific emails)
+  var date=gv(k+'-d')||'No date';
+  var dateLabel=date&&date!=='No date'?fmtD(date):date;
+  var title=CFG[k].exportTitle;
+  if(boardFilter)title=BOARD_LABELS[boardFilter]+' — '+title;
+  if(fromHistory)title+=' — HISTORY EXPORT';
+  var lines=[title,'Date: '+dateLabel,'Generated: '+new Date().toLocaleString(),''];
+  var records=fromHistory?ST[k].H:[{date:date,metrics:getMetrics(k),items:ST[k].S.map(function(s){return{t:s.t,n:s.n,st:true}}).concat(ST[k].I.map(function(i){return{t:i.t,n:i.n,st:false}})),notes:gv(k+'-n'),boards:k==='noc'?JSON.parse(JSON.stringify(NOC_BOARDS)):null}];
+  records.forEach(function(rec){
+    var m=rec.metrics||{};
+    lines.push('='.repeat(50));
+    lines.push(fmtD(rec.date));lines.push('');
+    // If a board filter is set, only show that board — skip metrics and agenda items
+    if(boardFilter){
+      if(rec.boards&&rec.boards[boardFilter]){
+        var brd=rec.boards[boardFilter];
+        lines.push(BOARD_LABELS[boardFilter].toUpperCase());
+        if(brd.length){
+          brd.forEach(function(tk,ti){
+            lines.push('  '+(ti+1)+'. Ticket: '+(tk.num||'—'));
+            if(tk.desc){tk.desc.split('\n').forEach(function(l){if(l.trim())lines.push('     '+l)})}
+          });
+        } else {
+          lines.push('  No tickets.');
+        }
+      }
+      if(rec.notes){lines.push('');lines.push('Notes:');lines.push(rec.notes)}
+      lines.push('');
+      return;
+    }
+    // Full agenda
+    if(CFG[k].metrics.length){
+      lines.push('METRICS');
+      CFG[k].metrics.forEach(function(f){lines.push('  '+CFG[k].mLabels[f]+': '+(m[f]||'—'))});
+      lines.push('');
+    }
+    lines.push('AGENDA');
+    rec.items.forEach(function(it,j){
+      lines.push((j+1)+'. '+it.t+(it.st?' *':''));
+      if(it.n){it.n.split('\n').forEach(function(l){if(l.trim())lines.push('   '+l)})}
+    });
+    if(k==='noc'&&rec.boards){
+      lines.push('');
+      Object.keys(BOARD_LABELS).forEach(function(b){
+        var brd=rec.boards[b];
+        if(brd&&brd.length){
+          lines.push(BOARD_LABELS[b].toUpperCase());
+          brd.forEach(function(tk,ti){
+            lines.push('  '+(ti+1)+'. Ticket: '+(tk.num||'—'));
+            if(tk.desc){tk.desc.split('\n').forEach(function(l){if(l.trim())lines.push('     '+l)})}
+          });
+          lines.push('');
+        }
+      });
+    }
+    if(rec.notes){lines.push('');lines.push('Notes:');lines.push(rec.notes)}
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+function doExport(k){
+  if(!ST[k].H.length){alert('No history to export yet.');return}
+  var blob=new Blob([buildText(k,true)],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=k+'-history.txt';a.click();
+}
+
+// ── SHARE MODAL ───────────────────────────────────────────────────────────────
+var _mk=null,_mt=null,_mb=null;
+function openModal(k,type,board){
+  _mk=k;_mt=type;_mb=board||null;
+  var tr=document.getElementById('modal-type-row');
+  if(type==='board'){
+    document.getElementById('modal-title').textContent='Share '+BOARD_LABELS[board];
+    document.getElementById('modal-desc').textContent='Sends the '+BOARD_LABELS[board]+' tickets and date to an email address.';
+    tr.style.display='none';_mt='board';
+  } else if(type==='agenda'){
+    document.getElementById('modal-title').textContent='Share agenda';
+    document.getElementById('modal-desc').textContent='Sends the full current agenda with date to an email address.';
+    tr.style.display='none';_mt='agenda';
+  } else {
+    document.getElementById('modal-title').textContent='Share history';
+    document.getElementById('modal-desc').textContent='Choose what to send.';
+    tr.style.display='flex';selType('history');
+  }
+  sv('modal-email','');
+  document.getElementById('share-modal').classList.add('open');
+  setTimeout(function(){document.getElementById('modal-email').focus()},100);
+}
+function selType(t){
+  _mt=t;
+  document.getElementById('type-agenda').className='type-btn'+(t==='agenda'?' sel':'');
+  document.getElementById('type-history').className='type-btn'+(t==='history'?' sel':'');
+}
+function closeModal(){document.getElementById('share-modal').classList.remove('open');_mk=null;_mt=null}
+document.getElementById('share-modal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+function sendEmail(){
+  var email=document.getElementById('modal-email').value.trim();
+  if(!email){alert('Please enter an email address.');return}
+  var subject,body;
+  var date=gv(_mk+'-d');
+  var dateStr=date?fmtD(date):'';
+  if(_mt==='board'){
+    subject=BOARD_LABELS[_mb]+' — '+CFG[_mk].label+(dateStr?' ('+dateStr+')':'');
+    body=buildText(_mk,false,_mb);
+  } else if(_mt==='history'){
+    subject=CFG[_mk].label+' — History';
+    body=buildText(_mk,true,null);
+  } else {
+    subject=CFG[_mk].label+(dateStr?' — '+dateStr:'');
+    body=buildText(_mk,false,null);
+  }
+  window.location.href='mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  closeModal();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+Object.keys(CFG).forEach(function(k){
+  sv(k+'-d',CFG[k].defDate());
+  renderRows(k,'S');
+  renderRows(k,'I');
+  renderHistory(k);
+});
+renderAllTickets();
+setTimeout(autoGrowAll, 50);
+</script>
+</body>
+</html>
