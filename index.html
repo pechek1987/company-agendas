@@ -525,55 +525,6 @@ function handleBulletKeydown(e){
 // ── STORAGE ───────────────────────────────────────────────────────────────────
 function lsGet(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-
-// ── API ───────────────────────────────────────────────────────────────────────
-var API='/api';
-
-async function apiGet(url){
-  try{
-    var r=await fetch(url);
-    if(!r.ok)return null;
-    return await r.json();
-  }catch(e){return null}
-}
-
-async function apiPost(url,data){
-  try{
-    var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-    if(!r.ok)return null;
-    return await r.json();
-  }catch(e){return null}
-}
-
-async function apiDelete(url){
-  try{
-    var r=await fetch(url,{method:'DELETE'});
-    return r.ok;
-  }catch(e){return false}
-}
-
-async function dbGetHistory(k){
-  var data=await apiGet(API+'/history/'+k);
-  return data||[];
-}
-
-async function dbSaveHistory(k,rec){
-  rec.agendaKey=k;
-  return await apiPost(API+'/history',rec);
-}
-
-async function dbDeleteHistory(k,date){
-  return await apiDelete(API+'/history/'+k+'/'+date);
-}
-
-async function dbGetStandings(k){
-  var data=await apiGet(API+'/standings/'+k);
-  return data;
-}
-
-async function dbSaveStandings(k,items){
-  return await apiPost(API+'/standings',{agendaKey:k,items:items});
-}
 function x(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function gv(id){var el=document.getElementById(id);return el?el.value.trim():''}
 function sv(id,val){var el=document.getElementById(id);if(el)el.value=val||''}
@@ -745,10 +696,9 @@ function saveAgenda(k){
   if(idx>=0)ST[k].H[idx]=rec;else ST[k].H.unshift(rec);
   ST[k].H.sort(function(a,b){return b.date.localeCompare(a.date)});
   lsSet(CFG[k].ls_h,ST[k].H);lsSet(CFG[k].ls_s,ST[k].S);
-  var wasEditing=ST[k].editing;
-  // Save to DB
   dbSaveHistory(k,JSON.parse(JSON.stringify(rec)));
   dbSaveStandings(k,ST[k].S);
+  var wasEditing=ST[k].editing;
   clearForm(k);renderHistory(k);
   var msg=document.getElementById(k+'-ok');
   if(msg){msg.textContent=(wasEditing?'Record updated for ':'Saved for ')+fmtD(date);msg.style.display='block';setTimeout(function(){msg.style.display='none'},3500)}
@@ -806,9 +756,7 @@ function renderHistory(k){
 function delRec(k,date){
   if(!confirm('Delete record for '+date+'?'))return;
   ST[k].H=ST[k].H.filter(function(h){return h.date!==date});
-  lsSet(CFG[k].ls_h,ST[k].H);
-  dbDeleteHistory(k,date);
-  ST[k].expanded=null;renderHistory(k);
+  lsSet(CFG[k].ls_h,ST[k].H);ST[k].expanded=null;renderHistory(k);
 }
 
 // ── EXPORT ────────────────────────────────────────────────────────────────────
@@ -930,25 +878,55 @@ function sendEmail(){
   closeModal();
 }
 
+// ── SUPABASE ─────────────────────────────────────────────────────────────────
+var SB_URL='https://vfaxhokvvmbgllviwbwe.supabase.co';
+var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmYXhob2t2dm1iZ2xsdml3YndlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzODI3MjMsImV4cCI6MjA5Njk1ODcyM30.NCkRkkaf57KlwH-aQBeGx70onnTXvgoNQqzexmUwnHk';
+
+async function sbFetch(path,method,body){
+  try{
+    var opts={method:method||'GET',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':method==='POST'?'resolution=merge-duplicates':''}};
+    if(body)opts.body=JSON.stringify(body);
+    var r=await fetch(SB_URL+'/rest/v1/'+path,opts);
+    if(!r.ok){console.error('SB:',r.status);return null;}
+    var t=await r.text();return t?JSON.parse(t):null;
+  }catch(e){console.error('SB:',e);return null;}
+}
+
+async function dbGetHistory(k){
+  var data=await sbFetch('history?agenda_key=eq.'+encodeURIComponent(k)+'&order=date.desc','GET');
+  if(!data||!data.length)return lsGet(CFG[k].ls_h)||[];
+  return data.map(function(r){return r.data});
+}
+
+async function dbSaveHistory(k,rec){
+  var row={id:k+'_'+rec.date,agenda_key:k,date:rec.date,data:rec,saved_at:new Date().toISOString()};
+  await sbFetch('history','POST',row);
+}
+
+async function dbDeleteHistory(k,date){
+  await sbFetch('history?id=eq.'+encodeURIComponent(k+'_'+date),'DELETE');
+}
+
+async function dbGetStandings(k){
+  var data=await sbFetch('standings?agenda_key=eq.'+encodeURIComponent(k),'GET');
+  if(!data||!data.length)return null;
+  return data[0].items;
+}
+
+async function dbSaveStandings(k,items){
+  var row={id:k,agenda_key:k,items:items,updated_at:new Date().toISOString()};
+  await sbFetch('standings','POST',row);
+}
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
-async function initFromDB(){
+async function initApp(){
   var keys=Object.keys(CFG);
   for(var i=0;i<keys.length;i++){
     var k=keys[i];
     sv(k+'-d',CFG[k].defDate());
-    // Load standings from DB, fall back to localStorage
-    try{
-      var dbS=await dbGetStandings(k);
-      if(dbS&&dbS.length){ST[k].S=dbS;lsSet(CFG[k].ls_s,dbS);}
-    }catch(e){}
-    // Load history from DB, fall back to localStorage
-    try{
-      var dbH=await dbGetHistory(k);
-      if(dbH&&dbH.length){ST[k].H=dbH;lsSet(CFG[k].ls_h,dbH);}
-    }catch(e){}
-    renderRows(k,'S');
-    renderRows(k,'I');
-    renderHistory(k);
+    try{var dbS=await dbGetStandings(k);if(dbS&&dbS.length){ST[k].S=dbS;lsSet(CFG[k].ls_s,dbS);}}catch(e){}
+    try{var dbH=await dbGetHistory(k);if(dbH&&dbH.length){ST[k].H=dbH;lsSet(CFG[k].ls_h,dbH);}}catch(e){}
+    renderRows(k,'S');renderRows(k,'I');renderHistory(k);
     var notesEl=document.getElementById(k+'-n');
     if(notesEl&&(!notesEl.value||notesEl.value.trim()===''))notesEl.value='• ';
   }
@@ -956,7 +934,13 @@ async function initFromDB(){
   setTimeout(autoGrowAll,100);
 }
 
-initFromDB();
+// Also hook save/delete to use Supabase
+var _origSave=saveAgenda;
+saveAgenda=function(k){
+  _origSave(k);
+};
+
+initApp();
 </script>
 </body>
 </html>
