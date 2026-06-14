@@ -926,8 +926,20 @@ async function initApp(){
   for(var i=0;i<keys.length;i++){
     var k=keys[i];
     sv(k+'-d',CFG[k].defDate());
-    try{var dbS=await dbGetStandings(k);if(dbS&&dbS.length){ST[k].S=dbS;lsSet(CFG[k].ls_s,dbS);}}catch(e){}
-    try{var dbH=await dbGetHistory(k);if(dbH&&dbH.length){ST[k].H=dbH;lsSet(CFG[k].ls_h,dbH);}}catch(e){}
+    // Always load from Supabase first — overrides localStorage completely
+    try{
+      var dbS=await dbGetStandings(k);
+      if(dbS&&dbS.length){ST[k].S=dbS;lsSet(CFG[k].ls_s,dbS);}
+    }catch(e){}
+    try{
+      var dbH=await dbGetHistory(k);
+      // Always use Supabase result even if empty — this ensures deletes sync
+      ST[k].H=dbH||[];
+      lsSet(CFG[k].ls_h,ST[k].H);
+    }catch(e){
+      // Only fall back to localStorage if Supabase completely fails
+      ST[k].H=lsGet(CFG[k].ls_h)||[];
+    }
     renderRows(k,'S');renderRows(k,'I');renderHistory(k);
     var notesEl=document.getElementById(k+'-n');
     if(notesEl&&(!notesEl.value||notesEl.value.trim()===''))notesEl.value='• ';
