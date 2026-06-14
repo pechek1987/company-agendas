@@ -756,7 +756,9 @@ function renderHistory(k){
 function delRec(k,date){
   if(!confirm('Delete record for '+date+'?'))return;
   ST[k].H=ST[k].H.filter(function(h){return h.date!==date});
-  lsSet(CFG[k].ls_h,ST[k].H);ST[k].expanded=null;renderHistory(k);
+  lsSet(CFG[k].ls_h,ST[k].H);
+  dbDeleteHistory(k,date);
+  ST[k].expanded=null;renderHistory(k);
 }
 
 // ── EXPORT ────────────────────────────────────────────────────────────────────
