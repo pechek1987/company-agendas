@@ -180,7 +180,7 @@ textarea{resize:vertical;line-height:1.5}
   <div id="mon-ok" class="ok-msg"></div>
   <div id="mon-eb" class="edit-banner"><span id="mon-ebt"></span><button class="cancel-edit" onclick="cancelEdit('mon')">Cancel edit</button></div>
   <div class="card">
-    <h2>Previous Week Metrics</h2>
+    <h2 style="font-weight:700">Previous Week Metrics</h2>
     <div class="metrics-grid">
       <div class="metric-box"><div class="m-lbl">CSAT</div><input type="number" id="mon-csat" placeholder="—" min="0" max="100" step="0.1" style="color:#1a6b44"/><div class="m-unit">score / 100</div></div>
       <div class="metric-box"><div class="m-lbl">ATR</div><input type="number" id="mon-atr" placeholder="—" min="0" step="0.1" style="color:#1a4a8a"/><div class="m-unit">avg time to resolve</div></div>
@@ -192,15 +192,15 @@ textarea{resize:vertical;line-height:1.5}
   <div class="card">
     <h2 id="mon-ftitle">New Agenda</h2>
     <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="mon-d"/></div>
-    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Standing Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="mon-sw"></div><button class="addbtn" onclick="addRow('mon','S')">+ Add standing item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">This Week's Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="mon-iw"></div><button class="addbtn" onclick="addRow('mon','I')">+ Add item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Call Notes / Action Items</div>
     <textarea id="mon-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
     <div class="btn-row"><button class="savebtn" id="mon-sb" onclick="saveAgenda('mon')">Save to History</button><button class="clearbtn" onclick="clearForm('mon')">Clear</button></div>
     <div class="share-row"><button class="sharebtn" onclick="openModal('mon','agenda')">✉ Share this agenda</button></div>
@@ -218,15 +218,15 @@ textarea{resize:vertical;line-height:1.5}
   <div class="card">
     <h2 id="thu-ftitle">New Agenda</h2>
     <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="thu-d"/></div>
-    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Standing Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="thu-sw"></div><button class="addbtn" onclick="addRow('thu','S')">+ Add standing item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">This Week's Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="thu-iw"></div><button class="addbtn" onclick="addRow('thu','I')">+ Add item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Call Notes / Action Items</div>
     <textarea id="thu-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
     <div class="btn-row"><button class="savebtn" id="thu-sb" onclick="saveAgenda('thu')">Save to History</button><button class="clearbtn" onclick="clearForm('thu')">Clear</button></div>
     <div class="share-row"><button class="sharebtn" onclick="openModal('thu','agenda')">✉ Share this agenda</button></div>
@@ -244,15 +244,15 @@ textarea{resize:vertical;line-height:1.5}
   <div class="card">
     <h2 id="hr-ftitle">New Agenda</h2>
     <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="hr-d"/></div>
-    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Standing Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="hr-sw"></div><button class="addbtn" onclick="addRow('hr','S')">+ Add standing item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">This Week's Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="hr-iw"></div><button class="addbtn" onclick="addRow('hr','I')">+ Add item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Call Notes / Action Items</div>
     <textarea id="hr-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
     <div class="btn-row"><button class="savebtn" id="hr-sb" onclick="saveAgenda('hr')">Save to History</button><button class="clearbtn" onclick="clearForm('hr')">Clear</button></div>
     <div class="share-row"><button class="sharebtn" onclick="openModal('hr','agenda')">✉ Share this agenda</button></div>
@@ -268,7 +268,7 @@ textarea{resize:vertical;line-height:1.5}
   <div id="tlh-ok" class="ok-msg"></div>
   <div id="tlh-eb" class="edit-banner"><span id="tlh-ebt"></span><button class="cancel-edit" onclick="cancelEdit('tlh')">Cancel edit</button></div>
   <div class="card">
-    <h2>Current Board Metrics</h2>
+    <h2 style="font-weight:700">Current Board Metrics</h2>
     <div class="metrics-grid">
       <div class="metric-box"><div class="m-lbl">CSAT</div><input type="number" id="tlh-csat" placeholder="—" min="0" max="100" step="0.1" style="color:#1a6b44"/><div class="m-unit">score / 100</div></div>
       <div class="metric-box"><div class="m-lbl">ATR</div><input type="number" id="tlh-atr" placeholder="—" min="0" step="0.1" style="color:#1a4a8a"/><div class="m-unit">avg time to resolve</div></div>
@@ -280,15 +280,15 @@ textarea{resize:vertical;line-height:1.5}
   <div class="card">
     <h2 id="tlh-ftitle">New Agenda</h2>
     <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="tlh-d"/></div>
-    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Standing Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="tlh-sw"></div><button class="addbtn" onclick="addRow('tlh','S')">+ Add standing item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">Today's Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Today's Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="tlh-iw"></div><button class="addbtn" onclick="addRow('tlh','I')">+ Add item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Call Notes / Action Items</div>
     <textarea id="tlh-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
     <div class="btn-row"><button class="savebtn" id="tlh-sb" onclick="saveAgenda('tlh')">Save to History</button><button class="clearbtn" onclick="clearForm('tlh')">Clear</button></div>
     <div class="share-row"><button class="sharebtn" onclick="openModal('tlh','agenda')">✉ Share this agenda</button></div>
@@ -306,15 +306,15 @@ textarea{resize:vertical;line-height:1.5}
   <div class="card">
     <h2 id="whi-ftitle">New Agenda</h2>
     <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="whi-d"/></div>
-    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Standing Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="whi-sw"></div><button class="addbtn" onclick="addRow('whi','S')">+ Add standing item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">This Week's Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="whi-iw"></div><button class="addbtn" onclick="addRow('whi','I')">+ Add item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Call Notes / Action Items</div>
     <textarea id="whi-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
     <div class="btn-row"><button class="savebtn" id="whi-sb" onclick="saveAgenda('whi')">Save to History</button><button class="clearbtn" onclick="clearForm('whi')">Clear</button></div>
     <div class="share-row"><button class="sharebtn" onclick="openModal('whi','agenda')">✉ Share this agenda</button></div>
@@ -332,12 +332,12 @@ textarea{resize:vertical;line-height:1.5}
   <div class="card">
     <h2 id="noc-ftitle">New Agenda</h2>
     <div style="margin-bottom:1rem"><div class="lbl">Date</div><input type="date" id="noc-d"/></div>
-    <div class="lbl" style="margin-bottom:6px">Standing Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Standing Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="noc-sw"></div><button class="addbtn" onclick="addRow('noc','S')">+ Add standing item</button>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">This Week's Items</div>
-    <div class="col-h"><span>Topic / Notes</span></div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">This Week's Items</div>
+    <div class="col-h" style="font-weight:600;color:#555"><span>Topic / Notes</span></div>
     <div id="noc-iw"></div><button class="addbtn" onclick="addRow('noc','I')">+ Add item</button>
     <hr class="sec-divider"/>
     <!-- BOARDS -->
@@ -366,7 +366,7 @@ textarea{resize:vertical;line-height:1.5}
       <button class="addbtn" onclick="addTicket('third')">+ Add ticket</button>
     </div>
     <hr class="sec-divider"/>
-    <div class="lbl" style="margin-bottom:6px">Call Notes / Action Items</div>
+    <div class="lbl" style="margin-bottom:6px;font-size:13px;font-weight:700;color:#1a1a1a;text-transform:none;letter-spacing:0;border-left:3px solid #1a1a1a;padding-left:8px">Call Notes / Action Items</div>
     <textarea id="noc-n" rows="3" placeholder="Decisions, action items, follow-ups..." onfocus="if(!this.value||this.value.trim()===''){ this.value='• ';autoGrow(this)}" onkeydown="handleBulletKeydown(event)" oninput="handleBullet({target:this,inputType:'input'});autoGrow(this)"></textarea>
     <div class="btn-row"><button class="savebtn" id="noc-sb" onclick="saveAgenda('noc')">Save to History</button><button class="clearbtn" onclick="clearForm('noc')">Clear</button></div>
     <div class="share-row"><button class="sharebtn" onclick="openModal('noc','agenda')">✉ Share this agenda</button></div>
