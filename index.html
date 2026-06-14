@@ -896,7 +896,8 @@ async function sbFetch(path,method,body){
 
 async function dbGetHistory(k){
   var data=await sbFetch('history?agenda_key=eq.'+encodeURIComponent(k)+'&order=date.desc','GET');
-  if(!data||!data.length)return lsGet(CFG[k].ls_h)||[];
+  if(data===null)return lsGet(CFG[k].ls_h)||[]; // only fallback if fetch completely failed
+  if(!data.length)return []; // empty from Supabase means genuinely empty
   return data.map(function(r){return r.data});
 }
 
